@@ -1,0 +1,51 @@
+name: verify
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  local:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install .
+      - run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - run: entitygraph --output artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: graph-demo
+          path: artifacts/
+  integrations:
+    runs-on: ubuntu-latest
+    services:
+      neo4j:
+        image: neo4j:5.26-community
+        env:
+          NEO4J_AUTH: neo4j/ci-synthetic-only
+        ports: ['7474:7474', '7687:7687']
+        options: >-
+          --health-cmd "wget -q --spider http://localhost:7474 || exit 1"
+          --health-interval 10s --health-timeout 5s --health-retries 20
+    env:
+      NEO4J_PASSWORD: ci-synthetic-only
+      SPARK_LOCAL_IP: 127.0.0.1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: python -m pip install '.[spark,graph]'
+      - run: python -m tests.integration
+      - run: mvn -B -f java/pom.xml test
+      - name: Exercise Java API against imported graph
+        run: |
+          mvn -q -f java/pom.xml exec:java > /tmp/entitygraph-java.log 2>&1 &
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:8080/entities > /tmp/entities.json && break; sleep 2; done
+          python -c "import json; assert len(json.load(open('/tmp/entities.json'))) == 8"
+          test "$(curl -s -o /dev/null -w '%{http_code}' 'http://127.0.0.1:8080/entities?id=invalid')" = 400

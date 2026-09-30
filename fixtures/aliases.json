@@ -1,0 +1,9 @@
+{
+  "ORG": {
+    "Northstar Analytics": ["Northstar Analytics", "Northstar Analytics Inc."],
+    "Harbor Systems": ["Harbor Systems", "Harbor Systems Ltd."],
+    "Cedar Labs": ["Cedar Labs"]
+  },
+  "PER": {"Maya Chen": ["Maya Chen"], "Leo Rivera": ["Leo Rivera"], "Noah Patel": ["Noah Patel"]},
+  "LOC": {"Boston": ["Boston"], "Austin": ["Austin"]}
+}

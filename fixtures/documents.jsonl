@@ -1,0 +1,4 @@
+{"id":"email-001","kind":"email","text":"From: maya@northstar.example\nTo: leo@harbor.example\nMaya Chen at Northstar Analytics met Leo Rivera of Harbor Systems in Boston. Northstar Analytics paid Harbor Systems USD 12500."}
+{"id":"memo-002","kind":"memo","text":"Maya Chen from Northstar Analytics Inc. visited Boston. Leo Rivera at Harbor Systems Ltd. confirmed the delivery."}
+{"id":"email-003","kind":"email","text":"Noah Patel at Cedar Labs met Maya Chen in Austin. Cedar Labs paid Northstar Analytics USD 8000."}
+{"id":"memo-004","kind":"memo","text":"Northstar Analytics and Cedar Labs opened a joint office in Austin. Harbor Systems remains in Boston."}
